@@ -38,6 +38,15 @@ class _ListsScreenState extends State<ListsScreen> with Func {
           IconButton(
             onPressed: () {
               // View all items
+              Navigator.pushNamed(
+                context,
+                ViewListScreen.routeName,
+                arguments: const ViewArguments(
+                  listName: 'All Items',
+                  id: '',
+                  all: true,
+                ),
+              );
             },
             icon: const Icon(Icons.more_horiz),
           ),

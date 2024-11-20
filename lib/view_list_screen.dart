@@ -14,6 +14,10 @@ class ViewListScreen extends StatefulWidget {
 class _ViewListScreenState extends State<ViewListScreen> with Func {
   bool editable = false;
   final TextEditingController nameController = TextEditingController();
+  Map<int, bool> update = {};
+  Map<int, TextEditingController> itemNameControllers = {};
+  Map<int, TextEditingController> itemDescriptionControllers = {};
+  Map<int, bool> completed = {};
 
   @override
   Widget build(BuildContext context) {
@@ -48,85 +52,90 @@ class _ViewListScreenState extends State<ViewListScreen> with Func {
                 ),
               ),
         centerTitle: false,
-        actions: [
-          IconButton(
-            onPressed: editable
-                ? () async {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          icon: const CircleAvatar(
-                            radius: 30,
-                            child: Icon(
-                              Icons.delete,
-                              size: 30,
+        actions: args.all == true
+            ? []
+            : [
+                IconButton(
+                  onPressed: editable
+                      ? () async {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                icon: const CircleAvatar(
+                                  radius: 30,
+                                  child: Icon(
+                                    Icons.delete,
+                                    size: 30,
+                                  ),
+                                ),
+                                content: const Text(
+                                  'Do you want to delete this list?',
+                                ),
+                                actions: [
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      await deleteList(args.id);
+                                      if (context.mounted) {
+                                        Navigator.pushNamed(context, '/lists')
+                                            .then(
+                                          (value) => setState(() {}),
+                                        );
+                                      }
+                                    },
+                                    child: const Text('Yes'),
+                                  ),
+                                  OutlinedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        editable = false;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      : () {
+                          Navigator.of(context).pushNamed(
+                            AddItemScreen.routeName,
+                            arguments: ItemArguments(
+                              listId: args.id,
+                              listName: args.listName,
                             ),
-                          ),
-                          content: const Text(
-                            'Do you want to delete this list?',
-                          ),
-                          actions: [
-                            ElevatedButton(
-                              onPressed: () async {
-                                await deleteList(args.id);
-                                if (context.mounted) {
-                                  Navigator.pushNamed(context, '/lists').then(
-                                    (value) => setState(() {}),
-                                  );
-                                }
-                              },
-                              child: const Text('Yes'),
-                            ),
-                            OutlinedButton(
-                              onPressed: () {
-                                setState(() {
-                                  editable = false;
-                                });
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Cancel'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                : () {
-                    Navigator.of(context).pushNamed(
-                      AddItemScreen.routeName,
-                      arguments: ItemArguments(
-                        listId: args.id,
-                        listName: args.listName,
-                      ),
-                    );
-                  },
-            icon: Icon(editable ? Icons.delete : Icons.add),
-          ),
-          IconButton(
-            onPressed: editable
-                ? () async {
-                    await updateList(
-                      args.id,
-                      nameController.text.toString(),
-                    );
-                    if (context.mounted) {
-                      Navigator.pushNamed(context, '/lists').then(
-                        (value) => setState(() {}),
-                      );
-                    }
-                  }
-                : () {
-                    setState(() {
-                      editable = true;
-                    });
-                  },
-            icon: Icon(editable ? Icons.save : Icons.edit),
-          ),
-        ],
+                          );
+                        },
+                  icon: Icon(editable ? Icons.delete : Icons.add),
+                ),
+                IconButton(
+                  onPressed: editable
+                      ? () async {
+                          await updateList(
+                            args.id,
+                            nameController.text.toString(),
+                          );
+                          if (context.mounted) {
+                            Navigator.pushNamed(context, '/lists').then(
+                              (value) => setState(() {}),
+                            );
+                          }
+                        }
+                      : () {
+                          setState(() {
+                            editable = true;
+                          });
+                        },
+                  icon: Icon(editable ? Icons.save : Icons.edit),
+                ),
+              ],
       ),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: getItemsByList(args.id, context),
+        future: args.all == true
+            ? getItems(context)
+            : getItemsByList(args.id, context),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data!.isNotEmpty) {
@@ -134,32 +143,119 @@ class _ViewListScreenState extends State<ViewListScreen> with Func {
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   List itemsList = snapshot.data!.entries.toList();
-                  return Card(
-                    child: ListTile(
-                      leading: Checkbox(
-                        value: false,
-                        onChanged: (value) {},
-                      ),
-                      title: Text(
-                        // 'item $index',
-                        itemsList[index].value['name'],
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+                  itemNameControllers.putIfAbsent(
+                    index,
+                    () => TextEditingController(),
+                  );
+                  itemDescriptionControllers.putIfAbsent(
+                    index,
+                    () => TextEditingController(),
+                  );
+                  update.putIfAbsent(index, () => false);
+
+                  return Dismissible(
+                    key: UniqueKey(),
+                    onDismissed: (direction) {
+                      deleteItem(
+                        itemsList[index].value['id'],
+                      );
+                    },
+                    background: Container(
+                      color: Colors.red,
+                    ),
+                    secondaryBackground: Container(
+                      color: Colors.red,
+                      child: const Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Delete item',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      subtitle: Text(
-                        // 'description $index',
-                        itemsList[index].value['description'],
-                        style: const TextStyle(
-                          fontSize: 13,
+                    ),
+                    child: Card(
+                      child: ListTile(
+                        leading: Checkbox(
+                          value: itemsList[index].value['status'],
+                          onChanged: (value) {
+                            updateItem(
+                              itemsList[index].value['id'],
+                              args.id,
+                              itemsList[index].value['name'],
+                              itemsList[index].value['description'],
+                              value!,
+                            );
+                            setState(() {});
+                          },
                         ),
-                      ),
-                      trailing: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.edit,
-                          color: Colors.purple[200],
-                        ),
+                        title: update[index]!
+                            ? TextField(
+                                controller: itemNameControllers[index],
+                              )
+                            : Text(
+                                // 'item $index',
+                                itemsList[index].value['name'],
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                        subtitle: update[index]!
+                            ? TextField(
+                                controller: itemDescriptionControllers[index],
+                              )
+                            : Text(
+                                // 'description $index',
+                                itemsList[index].value['description'],
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                ),
+                              ),
+                        trailing: update[index]!
+                            ? IconButton(
+                                onPressed: () {
+                                  updateItem(
+                                    itemsList[index].value['id'],
+                                    args.id,
+                                    itemNameControllers[index]!.text,
+                                    itemDescriptionControllers[index]!.text,
+                                    completed[index] ?? false,
+                                  );
+                                  setState(() {
+                                    update[index] = false;
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.save,
+                                  color: Colors.purple[200],
+                                ),
+                              )
+                            : IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    update[index] = true;
+                                    itemNameControllers[index]!.text =
+                                        itemsList[index].value['name'];
+                                    itemDescriptionControllers[index]!.text =
+                                        itemsList[index].value['description'];
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.edit,
+                                  color: Colors.purple[200],
+                                ),
+                              ),
                       ),
                     ),
                   );
