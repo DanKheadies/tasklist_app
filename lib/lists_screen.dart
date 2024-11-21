@@ -1,5 +1,6 @@
 // import 'package:empty_widget/empty_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:tasklist_app/bottom_nav_bar.dart';
 import 'package:tasklist_app/func.dart';
 import 'package:tasklist_app/view_list_screen.dart';
 // import 'package:status_alert/status_alert.dart';
@@ -52,6 +53,8 @@ class _ListsScreenState extends State<ListsScreen> with Func {
           ),
         ],
       ),
+      // bottomNavigationBar: bottNavBar(),
+      bottomNavigationBar: const BottomNavBar(selectedIndex: 0),
       body: FutureBuilder(
         future: getLists(context),
         builder: (context, snapshot) {
@@ -139,6 +142,55 @@ class _ListsScreenState extends State<ListsScreen> with Func {
       ),
     );
   }
+
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+
+  //   if (_selectedIndex == 1) {
+  //     Navigator.of(context).pushNamed('/recipes');
+  //   } else if (_selectedIndex == 2) {
+  //     Navigator.of(context).pushNamed('/file-upload');
+  //   } else if (_selectedIndex == 3) {
+  //     Navigator.of(context).pushNamed('/chat-room');
+  //   }
+  // }
+
+  // BottomNavigationBar bottNavBar() {
+  //   return BottomNavigationBar(
+  //     currentIndex: _selectedIndex,
+  //     selectedItemColor: Colors.purple[200],
+  //     unselectedItemColor: Colors.black,
+  //     showUnselectedLabels: true,
+  //     unselectedLabelStyle: const TextStyle(
+  //       color: Colors.black,
+  //       fontSize: 11,
+  //     ),
+  //     unselectedIconTheme: const IconThemeData(
+  //       size: 15,
+  //     ),
+  //     onTap: _onItemTapped,
+  //     items: const [
+  //       BottomNavigationBarItem(
+  //         icon: Icon(Icons.home),
+  //         label: 'Home',
+  //       ),
+  //       BottomNavigationBarItem(
+  //         icon: Icon(Icons.restaurant),
+  //         label: 'Recipes',
+  //       ),
+  //       BottomNavigationBarItem(
+  //         icon: Icon(Icons.file_download_sharp),
+  //         label: 'Files',
+  //       ),
+  //       BottomNavigationBarItem(
+  //         icon: Icon(Icons.chat_bubble),
+  //         label: 'Chat',
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget addNewListButton() {
     return ElevatedButton.icon(

@@ -1,6 +1,8 @@
 // const baseUrl = 'http://localhost:8080';
 const baseUrl = 'http://192.168.1.127:8080';
 // const baseUrl = 'http://127.0.0.1:8080';
+const wsUrl = 'ws://192.168.1.127:8080';
+
 const allLists = '/';
 const newList = '/lists';
 const singleList = '$newList/';
@@ -22,3 +24,5 @@ const bearerAuth = '$auth/bearer';
 
 const api = '/api';
 const restapi = '$api/restapi';
+
+const files = '/files';

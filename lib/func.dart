@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -788,5 +789,42 @@ mixin Func {
     });
 
     return data;
+  }
+
+  /// File Upload
+  Future<void> fileUpload(File file) async {
+    FormData formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(file.path,
+          filename: file.path.split('/').last)
+    });
+
+    await sendFile(
+      endpoint: files,
+      formData: formData,
+    );
+  }
+
+  /// File Download
+  Future<Response<dynamic>> fileDownload() {
+    return sendRequest(
+      endpoint: files,
+      method: Method.get,
+    );
+  }
+
+  /// Sending a file to the server
+  Future<void> sendFile({
+    required String endpoint,
+    required FormData formData,
+  }) async {
+    httpService.init(BaseOptions(
+      baseUrl: baseUrl,
+      contentType: "multipart/form-data",
+    ));
+    final response = await httpService.requestFile(
+      endpoint: endpoint,
+      formData: formData,
+    );
+    return response;
   }
 }

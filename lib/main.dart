@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tasklist_app/add_item_screen.dart';
+import 'package:tasklist_app/chat_room_screen.dart';
+import 'package:tasklist_app/file_upload_screen.dart';
 import 'package:tasklist_app/landing.dart';
 import 'package:tasklist_app/lists_screen.dart';
+import 'package:tasklist_app/recipes_screen.dart';
 import 'package:tasklist_app/sign_in.dart';
 import 'package:tasklist_app/sign_up.dart';
 import 'package:tasklist_app/view_list_screen.dart';
@@ -32,6 +35,9 @@ class MyApp extends StatelessWidget {
         '/lists': (context) => const ListsScreen(),
         ViewListScreen.routeName: (context) => const ViewListScreen(),
         AddItemScreen.routeName: (context) => const AddItemScreen(),
+        '/recipes': (context) => const RecipesScreen(),
+        '/file-upload': (context) => const FileUploadScreen(),
+        '/chat-room': (context) => const ChatRoomScreen(),
       },
       debugShowCheckedModeBanner: false,
     );

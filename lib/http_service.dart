@@ -65,4 +65,27 @@ class HttpService {
       }
     }
   }
+
+  Future<dynamic> requestFile({
+    required String endpoint,
+    required FormData formData,
+  }) async {
+    Response response;
+
+    try {
+      response = await _dio!.post(
+        endpoint,
+        data: formData,
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception("Something went wrong");
+      }
+    } catch (e) {
+      print(e);
+      throw Exception("Something went wrong");
+    }
+  }
 }
