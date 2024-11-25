@@ -9,6 +9,8 @@ class Landing extends StatefulWidget {
 }
 
 class _LandingState extends State<Landing> with Func {
+  bool checkingStatus = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,17 +37,30 @@ class _LandingState extends State<Landing> with Func {
                 textAlign: TextAlign.center,
               ),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                await getLoginStatus(context);
-                // Navigator.of(context).pushNamed('/sign-in');
-              },
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(20),
-              ),
-              child: const Icon(Icons.keyboard_arrow_right),
-            ),
+            checkingStatus
+                ? const Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: CircularProgressIndicator(),
+                  )
+                : ElevatedButton(
+                    onPressed: () async {
+                      print('status');
+                      setState(() {
+                        checkingStatus = true;
+                      });
+                      // TODO: after first login, unable to finish request
+                      // and won't timeout; issues w/ redis command / connection
+                      await getLoginStatus(context);
+                      setState(() {
+                        checkingStatus = false;
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(20),
+                    ),
+                    child: const Icon(Icons.keyboard_arrow_right),
+                  ),
           ],
         ),
       ),

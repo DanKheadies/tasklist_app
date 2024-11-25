@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tasklist_app/constants.dart';
 import 'package:tasklist_app/http_service.dart';
+import 'package:tasklist_app/main.dart';
 
 mixin Func {
   HttpService httpService = HttpService();
@@ -16,6 +17,7 @@ mixin Func {
     Map<String, dynamic>? params,
     String? authorizationHeader,
   }) async {
+    print('1');
     httpService.init(
       BaseOptions(
         baseUrl: baseUrl,
@@ -26,12 +28,14 @@ mixin Func {
         receiveDataWhenStatusError: true,
       ),
     );
+    print('2');
 
     final response = await httpService.request(
       endpoint: endpoint,
       method: method,
       params: params,
     );
+    print('3');
 
     return response;
   }
@@ -525,6 +529,7 @@ mixin Func {
     BuildContext context,
     String username,
     String password,
+    bool rememberMe,
   ) async {
     await sendRequest(
       endpoint: basicAuth,
@@ -538,7 +543,14 @@ mixin Func {
     ).then((value) {
       if (context.mounted) {
         if (value.statusCode == 200) {
-          Navigator.of(context).pushNamed('/lists');
+          customProvider.setUser(value.data as Map<String, dynamic>);
+          // Note: making this await "like it should" and having a double
+          // context.mounted causes the nav to not work. TODO
+          // await setLoginStatus(rememberMe ? 1 : 0);
+          setLoginStatus(rememberMe ? 1 : 0);
+          if (context.mounted) {
+            Navigator.of(context).pushNamed('/lists');
+          }
         } else {
           ScaffoldMessenger.of(context)
             ..clearSnackBars()
@@ -564,7 +576,7 @@ mixin Func {
     });
   }
 
-  Future<void> updateUserUsingBasic(
+  Future<bool> updateUserUsingBasic(
     BuildContext context,
     String id,
     String name,
@@ -572,6 +584,11 @@ mixin Func {
     String newPassword,
     String oldPassword,
   ) async {
+    // print('id: $id');
+    // print('name: $name');
+    // print('username: $username');
+    // print('newPassword: $newPassword');
+    // print('oldPassword: $oldPassword');
     await sendRequest(
       endpoint: basicAuth + id,
       method: Method.patch,
@@ -592,7 +609,9 @@ mixin Func {
                 content: Text('User info updated.'),
               ),
             );
+          return true;
         } else {
+          // TODO: keeps hitting here, i.e. getting a 403 from the server
           ScaffoldMessenger.of(context)
             ..clearSnackBars()
             ..showSnackBar(
@@ -604,6 +623,7 @@ mixin Func {
       } else {
         print('not mounted');
       }
+      return false;
     }).catchError((err) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -612,7 +632,9 @@ mixin Func {
           ),
         );
       }
+      return false;
     });
+    return false;
   }
 
   Future<void> deleteUserUsingBasic(String id) async {

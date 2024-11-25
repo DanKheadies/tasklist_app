@@ -1,9 +1,7 @@
-// import 'package:empty_widget/empty_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:tasklist_app/bottom_nav_bar.dart';
 import 'package:tasklist_app/func.dart';
 import 'package:tasklist_app/view_list_screen.dart';
-// import 'package:status_alert/status_alert.dart';
 
 class ListsScreen extends StatefulWidget {
   const ListsScreen({super.key});
@@ -32,7 +30,7 @@ class _ListsScreenState extends State<ListsScreen> with Func {
         actions: [
           IconButton(
             onPressed: () {
-              // Navigate to Settings screen
+              Navigator.of(context).pushNamed('/settings');
             },
             icon: const Icon(Icons.settings),
           ),
@@ -53,7 +51,6 @@ class _ListsScreenState extends State<ListsScreen> with Func {
           ),
         ],
       ),
-      // bottomNavigationBar: bottNavBar(),
       bottomNavigationBar: const BottomNavBar(selectedIndex: 0),
       body: FutureBuilder(
         future: getLists(context),
@@ -66,11 +63,6 @@ class _ListsScreenState extends State<ListsScreen> with Func {
                   List entryList = snapshot.data!.entries.toList();
 
                   if (index == snapshot.data!.length) {
-                    // return ElevatedButton.icon(
-                    //   onPressed: () {},
-                    //   icon: const Icon(Icons.add),
-                    //   label: const Text('Add list'),
-                    // );
                     return addNewListButton();
                   } else {
                     return Card(
@@ -93,23 +85,6 @@ class _ListsScreenState extends State<ListsScreen> with Func {
                 },
               );
             } else {
-              // return Center(
-              //   child: EmptyWidget(
-              //     image: null,
-              //     packageImage: PackageImage.Image_4,
-              //     title: 'No Lists',
-              //     subTitle: 'No Lists available yet',
-              //     titleTextStyle: const TextStyle(
-              //       fontSize: 22,
-              //       color: Colors.deepPurple,
-              //       fontWeight: FontWeight.w500,
-              //     ),
-              //     subtitleTextStyle: const TextStyle(
-              //       fontSize: 14,
-              //       color: Colors.grey,
-              //     ),
-              //   ),
-              // );
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -142,55 +117,6 @@ class _ListsScreenState extends State<ListsScreen> with Func {
       ),
     );
   }
-
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-
-  //   if (_selectedIndex == 1) {
-  //     Navigator.of(context).pushNamed('/recipes');
-  //   } else if (_selectedIndex == 2) {
-  //     Navigator.of(context).pushNamed('/file-upload');
-  //   } else if (_selectedIndex == 3) {
-  //     Navigator.of(context).pushNamed('/chat-room');
-  //   }
-  // }
-
-  // BottomNavigationBar bottNavBar() {
-  //   return BottomNavigationBar(
-  //     currentIndex: _selectedIndex,
-  //     selectedItemColor: Colors.purple[200],
-  //     unselectedItemColor: Colors.black,
-  //     showUnselectedLabels: true,
-  //     unselectedLabelStyle: const TextStyle(
-  //       color: Colors.black,
-  //       fontSize: 11,
-  //     ),
-  //     unselectedIconTheme: const IconThemeData(
-  //       size: 15,
-  //     ),
-  //     onTap: _onItemTapped,
-  //     items: const [
-  //       BottomNavigationBarItem(
-  //         icon: Icon(Icons.home),
-  //         label: 'Home',
-  //       ),
-  //       BottomNavigationBarItem(
-  //         icon: Icon(Icons.restaurant),
-  //         label: 'Recipes',
-  //       ),
-  //       BottomNavigationBarItem(
-  //         icon: Icon(Icons.file_download_sharp),
-  //         label: 'Files',
-  //       ),
-  //       BottomNavigationBarItem(
-  //         icon: Icon(Icons.chat_bubble),
-  //         label: 'Chat',
-  //       ),
-  //     ],
-  //   );
-  // }
 
   Widget addNewListButton() {
     return ElevatedButton.icon(

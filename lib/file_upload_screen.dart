@@ -13,8 +13,6 @@ class FileUploadScreen extends StatefulWidget {
 }
 
 class _FileUploadScreenState extends State<FileUploadScreen> with Func {
-  int _selectedIndex = 2;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +26,6 @@ class _FileUploadScreenState extends State<FileUploadScreen> with Func {
         ),
         automaticallyImplyLeading: false,
       ),
-      // bottomNavigationBar: bottNavBar(),
       bottomNavigationBar: const BottomNavBar(selectedIndex: 2),
       body: SingleChildScrollView(
         child: Padding(
@@ -92,55 +89,6 @@ class _FileUploadScreenState extends State<FileUploadScreen> with Func {
           ),
         ),
       ),
-    );
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    if (_selectedIndex == 0) {
-      Navigator.of(context).pushNamed('/lists');
-    } else if (_selectedIndex == 1) {
-      Navigator.of(context).pushNamed('/recipes');
-    } else {
-      Navigator.of(context).pushNamed('/chat-room');
-    }
-  }
-
-  BottomNavigationBar bottNavBar() {
-    return BottomNavigationBar(
-      currentIndex: _selectedIndex,
-      selectedItemColor: Colors.purple[200],
-      unselectedItemColor: Colors.black,
-      showUnselectedLabels: true,
-      unselectedLabelStyle: const TextStyle(
-        color: Colors.black,
-        fontSize: 11,
-      ),
-      unselectedIconTheme: const IconThemeData(
-        size: 15,
-      ),
-      onTap: _onItemTapped,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.restaurant),
-          label: 'Recipes',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.file_download_sharp),
-          label: 'Files',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.chat_bubble),
-          label: 'Chat',
-        ),
-      ],
     );
   }
 }

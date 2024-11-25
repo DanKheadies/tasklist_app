@@ -35,18 +35,6 @@ class _SignInState extends State<SignIn> with Func {
                     width: 300,
                   ),
                 ),
-                // TextFormField(
-                //   controller: nameController,
-                //   decoration: const InputDecoration(
-                //     hintText: 'Enter name',
-                //   ),
-                //   validator: (value) {
-                //     if (value == null || value.isEmpty) {
-                //       return 'Please enter name';
-                //     }
-                //     return null;
-                //   },
-                // ),
                 TextFormField(
                   controller: usernameController,
                   decoration: const InputDecoration(
@@ -73,12 +61,6 @@ class _SignInState extends State<SignIn> with Func {
                       icon: const Icon(Icons.clear),
                     ),
                   ),
-                  // validator: (value) {
-                  //   if (value == null || value.isEmpty) {
-                  //     return 'Please enter username';
-                  //   }
-                  //   return null;
-                  // },
                 ),
                 CheckboxListTile(
                   value: rememberMe,
@@ -100,6 +82,7 @@ class _SignInState extends State<SignIn> with Func {
                             context,
                             usernameController.text,
                             passwordController.text,
+                            rememberMe,
                           );
                         }
                       },

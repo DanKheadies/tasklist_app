@@ -205,7 +205,6 @@ class _ViewListScreenState extends State<ViewListScreen> with Func {
                                 controller: itemNameControllers[index],
                               )
                             : Text(
-                                // 'item $index',
                                 itemsList[index].value['name'],
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -216,7 +215,6 @@ class _ViewListScreenState extends State<ViewListScreen> with Func {
                                 controller: itemDescriptionControllers[index],
                               )
                             : Text(
-                                // 'description $index',
                                 itemsList[index].value['description'],
                                 style: const TextStyle(
                                   fontSize: 13,
@@ -273,11 +271,6 @@ class _ViewListScreenState extends State<ViewListScreen> with Func {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  // const SizedBox(
-                  //   height: 20,
-                  //   width: double.infinity,
-                  // ),
-                  // addNewItemButton(),
                   SizedBox(
                     height: 50,
                     width: double.infinity,
@@ -307,54 +300,3 @@ class ViewArguments {
     this.all,
   });
 }
-
-// Widget addNewItemButton() {
-//   return ElevatedButton.icon(
-//     onPressed: () {
-//       showDialog(
-//         context: context,
-//         builder: (context) {
-//           return AlertDialog(
-//             icon: const CircleAvatar(
-//               radius: 30,
-//               child: Icon(
-//                 Icons.add,
-//                 size: 30,
-//               ),
-//             ),
-//             content: Form(
-//               key: _formKey,
-//               child: TextFormField(
-//                 controller: nameController,
-//                 decoration: const InputDecoration(
-//                   hintText: 'Add name',
-//                 ),
-//                 validator: (value) {
-//                   if (value == null || value.isEmpty) {
-//                     return 'Please enter a new list';
-//                   }
-//                   return null;
-//                 },
-//               ),
-//             ),
-//             actions: [
-//               ElevatedButton(
-//                 onPressed: () {
-//                   if (_formKey.currentState!.validate()) {
-//                     createList(nameController.text);
-//                     nameController.clear();
-//                     Navigator.pop(context);
-//                     setState(() {});
-//                   }
-//                 },
-//                 child: const Text('Add'),
-//               ),
-//             ],
-//           );
-//         },
-//       );
-//     },
-//     icon: const Icon(Icons.add),
-//     label: const Text('Add new list'),
-//   );
-// }

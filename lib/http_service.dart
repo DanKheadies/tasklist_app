@@ -17,7 +17,7 @@ class HttpService {
     return this;
   }
 
-  request({
+  Future<Response> request({
     required String endpoint,
     required Method method,
     Map<String, dynamic>? params,
@@ -45,13 +45,17 @@ class HttpService {
           data: jsonEncode(params),
         );
       }
+
       return response;
+      // TODO: better error handling
     } on DioException catch (err) {
       // print(err.error); // null
       // print(err.message); // main "meat" w/ code
       // print(err.response);  // blank
       // print(err.type);
       if (err.type == DioExceptionType.badResponse) {
+        // print(err);
+        // print(err.message);
         return Response(
           requestOptions: RequestOptions(),
           data: {
@@ -60,8 +64,14 @@ class HttpService {
           },
         );
       } else {
-        print('other..');
-        return err;
+        // print('other type..');
+        return Response(
+          requestOptions: RequestOptions(),
+          data: {
+            'message': 'Other type of issue.',
+            'status': '404',
+          },
+        );
       }
     }
   }

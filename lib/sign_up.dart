@@ -71,12 +71,6 @@ class _SignUpState extends State<SignUp> with Func {
                       icon: const Icon(Icons.clear),
                     ),
                   ),
-                  // validator: (value) {
-                  //   if (value == null || value.isEmpty) {
-                  //     return 'Please enter password';
-                  //   }
-                  //   return null;
-                  // },
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8),

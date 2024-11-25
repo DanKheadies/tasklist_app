@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tasklist_app/bottom_nav_bar.dart';
 import 'package:tasklist_app/constants.dart';
+import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChatRoomScreen extends StatefulWidget {
@@ -16,18 +17,53 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   WebSocketChannel channel = WebSocketChannel.connect(
     Uri.parse(wsUrl),
   );
+  // late WebSocketChannel channel;
+  late IOWebSocketChannel ioChannel;
 
   @override
   void initState() {
     super.initState();
-    channel.stream.listen((message) {
-      getMessages(message, Colors.blue);
-    });
+
+    initializeStream();
+
+    print('g2g');
+  }
+
+  Future<void> initializeStream() async {
+    print('init stream');
+    try {
+      // channel = WebSocketChannel.connect(
+      //   Uri.parse(wsUrl),
+      // );
+      ioChannel = IOWebSocketChannel.connect(
+        Uri.parse(wsUrl),
+      );
+      // await channel.ready;
+      await ioChannel.ready;
+      print('channel ready');
+
+      ioChannel.stream.listen((message) {
+        print('trigger stream');
+        getMessages(message, Colors.blue);
+      }).onError((err) {
+        print('err: $err');
+      });
+    } catch (err) {
+      print('error getting ready: $err');
+      if (err is WebSocketChannelException) {
+        print('derp');
+        if (err.inner != null) {
+          final e = err.inner as dynamic;
+          print('Websocket inner error: ${e.message.toString()}');
+        }
+        print('Websocket error: ${err.message}');
+      }
+    }
   }
 
   @override
   void dispose() {
-    channel.sink.close();
+    ioChannel.sink.close();
     super.dispose();
   }
 
@@ -52,9 +88,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [],
+                  children: messages,
                 ),
                 Row(
                   children: [
@@ -74,6 +110,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           messageController.text,
                           Colors.black54,
                         );
+                        ioChannel.sink.add(messageController.text);
+                        messageController.clear();
                       },
                       icon: Icon(
                         Icons.send,
@@ -109,4 +147,29 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       );
     });
   }
+
+  // SocketChannel getChannel() {
+  //   return SocketChannel();
+  // }
 }
+
+// TODO: potential follow-up, rxdart: ^0.28.0
+// https://medium.com/@ilia_zadiabin/websocket-reconnection-in-flutter-35bb7ff50d0d
+
+// class SocketChannel {
+//   SocketChannel(this._getIOWebSocketChannel) {
+//     _startConnection();
+//   }
+
+//   final IOWebSocketChannel Function() _getIOWebSocketChannel;
+
+//   late IOWebSocketChannel _ioWebSocketChannel;
+
+//   WebSocketSink get _sink => _ioWebSocketChannel.sink;
+
+//   late Stream<dynamic> _innerStream;
+
+//   final _outerStreamSubject = BehaviorSubject<dynamic>();
+
+//   Stream<dynamic> get stream => _outerStreamSubject.stream;
+// }

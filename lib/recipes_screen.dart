@@ -10,8 +10,6 @@ class RecipesScreen extends StatefulWidget {
 }
 
 class _RecipesScreenState extends State<RecipesScreen> with Func {
-  // int _selectedIndex = 1;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,17 +21,8 @@ class _RecipesScreenState extends State<RecipesScreen> with Func {
             fontWeight: FontWeight.bold,
           ),
         ),
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back_ios),
-        //   onPressed: () {
-        //     Navigator.of(context)
-        //         .pushNamed('/lists')
-        //         .then((value) => setState(() {}));
-        //   },
-        // ),
         automaticallyImplyLeading: false,
       ),
-      // bottomNavigationBar: bottNavBar(),
       bottomNavigationBar: const BottomNavBar(selectedIndex: 1),
       body: FutureBuilder(
         future: getRandomAPI(context),
@@ -109,53 +98,4 @@ class _RecipesScreenState extends State<RecipesScreen> with Func {
       ),
     );
   }
-
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-
-  //   if (_selectedIndex == 0) {
-  //     Navigator.of(context).pushNamed('/lists');
-  //   } else if (_selectedIndex == 2) {
-  //     Navigator.of(context).pushNamed('/file-upload');
-  //   } else {
-  //     Navigator.of(context).pushNamed('/chat-room');
-  //   }
-  // }
-
-  // BottomNavigationBar bottNavBar() {
-  //   return BottomNavigationBar(
-  //     currentIndex: _selectedIndex,
-  //     selectedItemColor: Colors.purple[200],
-  //     unselectedItemColor: Colors.black,
-  //     showUnselectedLabels: true,
-  //     unselectedLabelStyle: const TextStyle(
-  //       color: Colors.black,
-  //       fontSize: 11,
-  //     ),
-  //     unselectedIconTheme: const IconThemeData(
-  //       size: 15,
-  //     ),
-  //     onTap: _onItemTapped,
-  //     items: const [
-  //       BottomNavigationBarItem(
-  //         icon: Icon(Icons.home),
-  //         label: 'Home',
-  //       ),
-  //       BottomNavigationBarItem(
-  //         icon: Icon(Icons.restaurant),
-  //         label: 'Recipes',
-  //       ),
-  //       BottomNavigationBarItem(
-  //         icon: Icon(Icons.file_download_sharp),
-  //         label: 'Files',
-  //       ),
-  //       BottomNavigationBarItem(
-  //         icon: Icon(Icons.chat_bubble),
-  //         label: 'Chat',
-  //       ),
-  //     ],
-  //   );
-  // }
 }
